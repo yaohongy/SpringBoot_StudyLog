@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1>User Manager</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <table class="talbe table-striped table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Delete?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div th:each="user : ${users}">
+                            <tr>
+                                <th scope="row" th:text="${user.id}">#</th>
+                                <td th:text="${user.username}">username</td>
+                                <td th:text="${user.email}">email</td>
+                                <td>delete?</td>
+                            </tr>
+                        </div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
