@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+
+<body>
+
+    <header class="masthead">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1 th:text="${user.username} + ' Logs'">Message</h1>
+                        <span class="subheading"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="nav">
+                    <a th:href="@{/logout}" class="nav-link">Logout</a>
+                    <a th:href="@{/newlog}" class="nav-link">New Log</a>
+                </div>
+                <hr>
+                <hr>
+                <div th:each="log : ${logs}">
+                    <h3 th:text="${log.title}">title</h3>
+                    <p th:text="${log.body}">body</p>
+                    <p th:text="${log.createDate}">date</p> 
+                    <form th:action="@{'/deletelog/{id}'(id=${log.id})}" method="post">
+                        <button type="submit" onclick="return confirm('sure?')">delete</button>
+                    </form>
+                   
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>

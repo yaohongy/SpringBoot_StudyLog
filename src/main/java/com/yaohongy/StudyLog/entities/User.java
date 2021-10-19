@@ -31,10 +31,17 @@ public class User implements Serializable{
     @Email(message = "Email is not valid")
     private String email;
 
+    @Column(name = "active", nullable = false)
+    private int active;
+
     @JsonIgnore
     @OneToMany
     private Collection<StudyLog> logs;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    private Collection<Authority> authorities;
+    
     public long getId() {
         return id;
     }
@@ -67,11 +74,27 @@ public class User implements Serializable{
         this.email = email;
     }
 
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
     public Collection<StudyLog> getLogs() {
         return logs;
     }
 
     public void setPosts(Collection<StudyLog> logs) {
         this.logs = logs;
+    }
+
+    public Collection<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setRoles(Collection<Authority> authorities) {
+        this.authorities = authorities;
     }
 }
