@@ -37,7 +37,11 @@
                                 <th scope="row" th:text="${user.id}">#</th>
                                 <td th:text="${user.username}">username</td>
                                 <td th:text="${user.email}">email</td>
-                                <td>delete?</td>
+                                <td>
+                                    <form action="#" th:action="@{'/api/v1/user/{username}'(username=${user.username})}" th:method="delete" >
+                                        <button type="submit" id="submitButton">Delete?</button>
+                                    </form>
+                                </td>
                             </tr>
                         </div>
                     </tbody>

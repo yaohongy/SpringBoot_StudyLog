@@ -34,13 +34,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
         auth.userDetailsService(userDetailsService);
     }
 
+    
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
             .httpBasic()
                 .and()
             .authorizeRequests()
-            .antMatchers("/*").permitAll()
+            .antMatchers("/login").permitAll()
+            .antMatchers("/mylogs").permitAll()
+            .antMatchers("/users/new").permitAll()
+            .antMatchers("/users/manager").hasAuthority("ADMIN")
                 .and()
             .formLogin()
             .loginPage("/login")

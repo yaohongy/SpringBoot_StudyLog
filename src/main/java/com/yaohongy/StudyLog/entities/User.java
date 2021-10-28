@@ -1,13 +1,20 @@
 package com.yaohongy.StudyLog.entities;
 
 import org.hibernate.validator.constraints.Length;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Collection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User implements Serializable{
