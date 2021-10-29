@@ -4,8 +4,10 @@ import java.sql.Timestamp;
 import java.util.Collection;
 
 import com.yaohongy.StudyLog.config.MyUserDetail;
+import com.yaohongy.StudyLog.entities.Category;
 import com.yaohongy.StudyLog.entities.StudyLog;
 import com.yaohongy.StudyLog.entities.User;
+import com.yaohongy.StudyLog.service.CategoryService;
 import com.yaohongy.StudyLog.service.LogService;
 import com.yaohongy.StudyLog.service.UserService;
 
@@ -24,11 +26,13 @@ public class LogController {
     
     private final LogService logService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public LogController(LogService logService, UserService userService) {
+    public LogController(LogService logService, UserService userService, CategoryService categoryService) {
         this.logService = logService;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/mylogs")
@@ -37,8 +41,11 @@ public class LogController {
         MyUserDetail myUserDetail = (MyUserDetail) authentication.getPrincipal();
         User user = myUserDetail.getUser();
         Collection<StudyLog> logs = logService.findAllPageByUser(user, page, perPage).getContent();
+        Collection<Category> categories = categoryService.findByUser(user, 0, Integer.MAX_VALUE).getContent();
         model.addAttribute("logs", logs);
         model.addAttribute("user", user);
+        model.addAttribute("categories", categories);
+        model.addAttribute("category", new Category());
         return "mylogs";
     }
 
@@ -47,19 +54,33 @@ public class LogController {
         if(authentication == null) return "login";
         MyUserDetail myUserDetail = (MyUserDetail) authentication.getPrincipal();
         User user = myUserDetail.getUser();
+        Collection<Category> categories = categoryService.findByUser(user, 0, Integer.MAX_VALUE).getContent();
+        model.addAttribute("categories", categories);
         model.addAttribute("user", user);
-        model.addAttribute("logs", new StudyLog());
+        model.addAttribute("category", new Category());
+        model.addAttribute("log", new StudyLog());
         return "newlog";
     }
 
     @PostMapping("/newlog")
-    public String postnewlog(Authentication authentication, Model model, @ModelAttribute StudyLog newlog) {
+    public String postNewLog(Authentication authentication, Model model, @ModelAttribute StudyLog log, @ModelAttribute Category category) {
         if(authentication == null) return "login";
         MyUserDetail myUserDetail = (MyUserDetail) authentication.getPrincipal();
         User user = myUserDetail.getUser();
-        newlog.setUser(user);
-        newlog.setCreateDate(new Timestamp(System.currentTimeMillis()));
-        logService.save(newlog);
+        log.setUser(user);
+        log.setCreateDate(new Timestamp(System.currentTimeMillis()));
+        log.setCategory(categoryService.findById(category.getId()));
+        logService.save(log);
+        return "redirect:/mylogs";
+    }
+
+    @PostMapping("/newCategory")
+    public String postNewCategory(Authentication authentication, Model model, @ModelAttribute Category category) {
+        if(authentication == null) return "login";
+        MyUserDetail myUserDetail = (MyUserDetail) authentication.getPrincipal();
+        User user = myUserDetail.getUser();
+        category.setUser(user);
+        categoryService.save(category);
         return "redirect:/mylogs";
     }
 

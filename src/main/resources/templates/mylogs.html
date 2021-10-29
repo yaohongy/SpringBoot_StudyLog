@@ -24,13 +24,29 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="nav">
-                    <a th:href="@{/logout}" class="nav-link">Logout</a>
+                    <button onclick="showCategoryForm()">New Category</button>
                     <a th:href="@{/newlog}" class="nav-link">New Log</a>
+                    <a th:href="@{/logout}" class="nav-link">Logout</a>
+                </div>
+                <div class="col-sm-4">
+                    <div id="CategoryForm">
+                        <ul class="list-group">
+                            <li class="list-group-item" th:each="category : ${categories}" th:text="${category.categoryName}">Category Name</li>
+                        </ul>
+                        <form class="form-group" method="post" action="#" th:action="@{/newCategory}" th:object="${category}">
+                            <div class="form-group">
+                                <label for="CategoryName">Category</label>
+                                <input type="text" class="form-control" id='CategoryName' th:field="*{CategoryName}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                    </div>
                 </div>
                 <hr>
                 <hr>
                 <div th:each="log : ${logs}">
-                    <h3 th:text="${log.title}">title</h3>
+                    <h1 th:text="${log.title}">title</h1>
+                    <h3 th:text="${log.category.categoryName}">Category Name</h3>
                     <p th:text="${log.body}">body</p>
                     <p th:text="${log.createDate}">date</p> 
                     <form th:action="@{'/deletelog/{id}'(id=${log.id})}" method="post">
@@ -43,8 +59,22 @@
         </div>
     </div>
 
+<script>
+    function showCategoryForm() {
+        var x = document.getElementById("CategoryForm");
+        if (x.style.display == "none") {
+            x.style.display = "block";
+        }
+        else {
+            x.style.display = "none";
+        }
+    }
+</script>
 
-
-
+<style>
+    #CategoryForm {
+        display: none;
+    }
+</style>
 
 </body>

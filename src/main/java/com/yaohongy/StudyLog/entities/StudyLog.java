@@ -9,6 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "study_log")
 public class StudyLog implements Serializable{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "log_id")
@@ -30,6 +31,10 @@ public class StudyLog implements Serializable{
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public long getId() {
         return id;
@@ -69,6 +74,14 @@ public class StudyLog implements Serializable{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 }

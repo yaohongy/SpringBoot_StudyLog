@@ -12,6 +12,7 @@ import java.util.Optional;
 @Service("userService")
 public class UserService {
 
+    @Autowired
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;    
 

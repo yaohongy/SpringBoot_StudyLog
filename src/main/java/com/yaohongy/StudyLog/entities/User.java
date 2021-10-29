@@ -2,19 +2,12 @@ package com.yaohongy.StudyLog.entities;
 
 import org.hibernate.validator.constraints.Length;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Collection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User implements Serializable{
@@ -48,7 +41,10 @@ public class User implements Serializable{
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Collection<Authority> authorities;
-    
+
+    @OneToMany
+    private Collection<Category> category;
+
     public long getId() {
         return id;
     }
@@ -69,8 +65,8 @@ public class User implements Serializable{
         return password;
     }
 
-    public void setPassword(String passWord) {
-        this.password = passWord;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -93,7 +89,7 @@ public class User implements Serializable{
         return logs;
     }
 
-    public void setPosts(Collection<StudyLog> logs) {
+    public void setLogs(Collection<StudyLog> logs) {
         this.logs = logs;
     }
 
@@ -101,7 +97,16 @@ public class User implements Serializable{
         return authorities;
     }
 
-    public void setRoles(Collection<Authority> authorities) {
+    public void setAuthorities(Collection<Authority> authorities) {
         this.authorities = authorities;
     }
+
+    public Collection<Category> getCategory() {
+        return category;
+    }
+
+    public void setCategory(Collection<Category> category) {
+        this.category = category;
+    }
+    
 }

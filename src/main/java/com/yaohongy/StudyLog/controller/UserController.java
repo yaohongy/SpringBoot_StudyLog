@@ -2,6 +2,8 @@ package com.yaohongy.StudyLog.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.yaohongy.StudyLog.entities.User;
 import com.yaohongy.StudyLog.service.UserService;
 
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,10 +34,15 @@ public class UserController {
     }
 
     @PostMapping("/users/new") 
-    public String createUser(@ModelAttribute User user, Model model) {
-        user = userService.save(user);
-        model.addAttribute("user", user);
-        model.addAttribute("message", "User " + user.getUsername() + " has been created");
+    public String createUser(@Valid @ModelAttribute User user, Model model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("message", bindingResult.getAllErrors());
+        }
+        else {
+            user = userService.save(user);
+            model.addAttribute("user", user);
+            model.addAttribute("message", "User " + user.getUsername() + " has been created");
+        }
         return "message";
     }
 
