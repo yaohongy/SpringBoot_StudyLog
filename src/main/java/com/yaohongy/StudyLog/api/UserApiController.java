@@ -7,6 +7,9 @@ import com.yaohongy.StudyLog.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,17 +25,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 public class UserApiController {
     
     @Autowired
     private UserService userService;
     
     @GetMapping("/{username}")
-    public ResponseEntity<?> GetUserByUsername(@PathVariable String username) {
+    public EntityModel<User> GetUserByUsername(@PathVariable String username) {
         Optional<User> optionalUser = userService.findByUsername(username);
-        if (optionalUser.isPresent()) return new ResponseEntity<>(optionalUser.get(), HttpStatus.OK);
-        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        User user = optionalUser.get();
+        EntityModel<User> entityModel = EntityModel.of(user);
+        entityModel.add(
+            WebMvcLinkBuilder.linkTo(UserApiController.class)
+                            .slash(user.getUsername())
+                            .withSelfRel()
+        );
+        return entityModel;   
     }
 
     @PostMapping("")
@@ -60,9 +69,21 @@ public class UserApiController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> GetAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "Integer.MAX_VALUE") int perPage ) {
+    public CollectionModel<EntityModel<User>> GetAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1024") int perPage ) {
         Page<User> users = userService.findAllByPage(page, perPage);
-        return new ResponseEntity<>(users.get(), HttpStatus.OK);
+        CollectionModel<EntityModel<User>> collectionModel = CollectionModel.wrap(users.getContent());
+        collectionModel.add(
+            WebMvcLinkBuilder.linkTo(UserApiController.class)
+                            .withRel("All Users")
+        );
+        for (User user : users.getContent()) {
+            user.add(
+                WebMvcLinkBuilder.linkTo(UserApiController.class)
+                                .slash(user.getUsername())
+                                .withSelfRel()
+            );  
+        }
+        return collectionModel;
     }
 
 }

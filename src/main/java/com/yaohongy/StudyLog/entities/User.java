@@ -1,16 +1,16 @@
 package com.yaohongy.StudyLog.entities;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Collection;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user")
-public class User implements Serializable{
+public class User extends RepresentationModel<User> implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +34,7 @@ public class User implements Serializable{
     @Column(name = "active", nullable = false)
     private int active;
 
-    @JsonIgnore
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private Collection<StudyLog> logs;
 
     @ManyToMany(fetch = FetchType.EAGER)

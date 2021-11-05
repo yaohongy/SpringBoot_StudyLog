@@ -6,12 +6,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.yaohongy.StudyLog.config.MyUserDetail;
+import com.yaohongy.StudyLog.config.PageConfig;
 import com.yaohongy.StudyLog.entities.Category;
 import com.yaohongy.StudyLog.entities.StudyLog;
 import com.yaohongy.StudyLog.entities.User;
 import com.yaohongy.StudyLog.service.CategoryService;
 import com.yaohongy.StudyLog.service.LogService;
-import com.yaohongy.StudyLog.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -28,21 +28,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LogController {
     
     private final LogService logService;
-    private final UserService userService;
+    private final PageConfig pageConfig;
     private final CategoryService categoryService;
 
     @Autowired
-    public LogController(LogService logService, UserService userService, CategoryService categoryService) {
+    public LogController(LogService logService, PageConfig pageConfig, CategoryService categoryService) {
         this.logService = logService;
-        this.userService = userService;
+        this.pageConfig = pageConfig;
         this.categoryService = categoryService;
     }
 
     @GetMapping("/mylogs")
-    public String myLogs(Authentication authentication, Model model, @RequestParam(defaultValue = "NULL") String categoryName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int perPage) {
+    public String myLogs(Authentication authentication, Model model, @RequestParam(defaultValue = "NULL") String categoryName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int perPage) {
         if(authentication == null) return "login";
         MyUserDetail myUserDetail = (MyUserDetail) authentication.getPrincipal();
         User user = myUserDetail.getUser();
+        if (perPage == 0) perPage = pageConfig.getDefaultPageSize();
         Collection<StudyLog> logs = logService.findAllPageByUser(user, page, perPage).getContent();
         if (!categoryName.equals("NULL")) {
             logs = logs.stream().filter(log -> log.getCategory().getCategoryName().equals(categoryName)).collect(Collectors.toList());
